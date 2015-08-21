@@ -1,4 +1,4 @@
 <resources>
     <color name="action_bar">#298CD8</color>
-    <color name="action_bar_text">#AAFFFFFF</color>
+    <color name="action_bar_text">#FFFFFFFF</color>
 </resources>

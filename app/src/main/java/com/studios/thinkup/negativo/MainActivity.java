@@ -98,17 +98,10 @@ public class MainActivity extends Activity implements View.OnTouchListener, View
         ArrayList<Integer> valores = new ArrayList<>();
         Random r = new Random(SystemClock.currentThreadTimeMillis());
 
-        /*for (int i = 0; i < startNum; i++) {
+        for (int i = 0; i < startNum; i++) {
             valores.add(r.nextInt(6) + 1);
-        }*/
-        valores.add(5);
-        valores.add(1);
-        valores.add(5);
-        valores.add(1);
-        valores.add(5);
-        valores.add(1);
-        valores.add(5);
-        valores.add(1);
+        }
+
         return valores;
     }
 
@@ -352,26 +345,25 @@ public class MainActivity extends Activity implements View.OnTouchListener, View
     }
 
     private boolean esInfinito(List<NumeroText> seleccionados) {
-        int inicio = valoresTxt.indexOf(seleccionados.get(0)) - 1;
-        int posicion = inicio + seleccionados.size();
 
-
+        int posPosterior = valoresTxt.indexOf(seleccionados.get(seleccionados.size()-1)) + 1;
+        int posAnterior =  valoresTxt.indexOf(seleccionados.get(0)) -1;
         int index = 0;
-        for (int i = posicion; i < valoresTxt.size(); i++) {
+        for (int i = posPosterior; i < valoresTxt.size(); i++) {
             if (index > (seleccionados.size() - 1)) {
                 index = 0;
             }
-            if (seleccionados.get(index) != valoresTxt.get(i)) {
+            if (seleccionados.get(index).getValue() != valoresTxt.get(i).getValue()) {
                 return false;
             }
             index++;
         }
         index = seleccionados.size() - 1;
-        for (int i = inicio; i >= 0; i--) {
-            if (index > (seleccionados.size() - 1)) {
+        for (int i = posAnterior; i >= 0; i--) {
+            if (index < 0) {
                 index = seleccionados.size() - 1;
             }
-            if (seleccionados.get(index) != valoresTxt.get(i)) {
+            if (seleccionados.get(index).getValue() != valoresTxt.get(i).getValue()) {
                 return false;
             }
             index--;
@@ -382,15 +374,16 @@ public class MainActivity extends Activity implements View.OnTouchListener, View
 
     private void seleccionarNumero(NumeroText n) {
         int c;
-
+        if (n != null && !seleccionados.contains(n)) {
             if (toInfinity && !esInfinito) {
                 c = getResources().getColor(android.R.color.holo_blue_dark);
             } else {
                 c = getResources().getColor(android.R.color.holo_red_dark);
             }
+
+
             n.setTextColor(c);
             n.setShadowLayer((float) 20, 0, 0, c);
-        if (n != null && !seleccionados.contains(n)) {
             seleccionados.add(n);
         }
     }

@@ -1,6 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
+    packagingOptions {
+        exclude("META-INF/notice.txt")
+        exclude("META-INF/license.txt")
+    }
     signingConfigs {
         release {
             keyAlias 'toinfinity'
@@ -8,9 +12,15 @@ android {
             storeFile file('C:/Users/fcostazini/Desktop/fcostazinikeystore')
             storePassword 'Eusold1906@@'
         }
+        debug {
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+            storeFile file('C:/Users/fcostazini/.android/debug.keystore')
+            storePassword 'android'
+        }
     }
     compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    buildToolsVersion "21.1.2"
     defaultConfig {
         applicationId "com.studios.thinkup.negativo"
         minSdkVersion 16
@@ -18,16 +28,22 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
     buildTypes {
         release {
             minifyEnabled false
-            debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+            debuggable false
+        }
+        debug {
+            signingConfig signingConfigs.debug
         }
     }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:support-v4:22.2.1'
+    compile 'com.android.support:appcompat-v7:22.2.1'
 }

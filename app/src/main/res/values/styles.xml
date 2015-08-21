@@ -1,15 +1,17 @@
 <resources>
 
     <style name="CustomActionBarTheme"
-        parent="@android:style/Theme.Holo.Light">
+        parent="@style/Theme.AppCompat.Light.DarkActionBar">
         <item name="android:actionBarStyle">@style/MyActionBar</item>
         <item name="android:typeface">serif</item>
     </style>
     <!-- ActionBar styles -->
     <style name="MyActionBar"
-        parent="@android:style/Widget.Holo.Light.ActionBar">
+        parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="android:titleTextStyle">@style/MyActionBarTitleText</item>
 
+        <!-- Support library compatibility -->
+        <item name="background">@color/action_bar</item>
         <item name="android:background">@color/action_bar</item>
 
 
