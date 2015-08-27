@@ -2,12 +2,10 @@ package com.studios.thinkup.negativo;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -17,18 +15,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.studios.thinkup.negativo.components.NumeroText;
+import com.studios.thinkup.negativo.components.handler.ISelectableHandler;
+import com.studios.thinkup.negativo.components.handler.TouchHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Vector;
 
 
-public class MainActivity extends Activity implements View.OnTouchListener, View.OnLongClickListener {
+public class MainActivity extends Activity implements ISelectableHandler {
 
     private HorizontalScrollView hs;
     private ArrayList<NumeroText> valoresTxt;
-    private List<NumeroText> seleccionados;
+    private TouchHandler handler;
     private boolean toInfinity;
     private boolean esInfinito;
     private Integer startNum = 8;
@@ -40,13 +39,12 @@ public class MainActivity extends Activity implements View.OnTouchListener, View
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        seleccionados = new Vector<>();
         TextView tBack = (TextView) findViewById(R.id.background);
         tBack.setVisibility(View.GONE);
         valoresTxt = new ArrayList<>();
         final LinearLayout valoresLy = (LinearLayout) findViewById(R.id.ly_numeros);
         hs = (HorizontalScrollView) findViewById(R.id.scroll);
-        valoresLy.setOnTouchListener(this);
+        valoresLy.setOnTouchListener(new TouchHandler(valoresLy, this, 2, 9999));
         ArrayList<Integer> valores = generarValores(startNum);
         findViewById(R.id.ly_fin).setVisibility(View.GONE);
         findViewById(R.id.scroll).setVisibility(View.VISIBLE);
@@ -62,7 +60,6 @@ public class MainActivity extends Activity implements View.OnTouchListener, View
             valoresTxt.add(t);
         }
         updateValores();
-
     }
 
     private void reset() {
@@ -101,6 +98,7 @@ public class MainActivity extends Activity implements View.OnTouchListener, View
         for (int i = 0; i < startNum; i++) {
             valores.add(r.nextInt(6) + 1);
         }
+
 
         return valores;
     }
@@ -164,109 +162,6 @@ public class MainActivity extends Activity implements View.OnTouchListener, View
         checkFinDeJuego();
     }
 
-    @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
-        // TODO Auto-generated method stub
-
-        NumeroText n = (NumeroText) findViewAtPosition(view, (int) motionEvent.getRawX(), (int) motionEvent.getRawY());
-
-        if (toInfinity) {
-            return handlerToInfinityTouch(n, motionEvent);
-
-        } else {
-            return handleTouch(n, motionEvent);
-        }
-
-    }
-
-    private boolean handleTouch(NumeroText n, MotionEvent motionEvent) {
-        switch (motionEvent.getAction()) {
-            case MotionEvent.ACTION_DOWN: {
-                startClickTime = SystemClock.currentThreadTimeMillis();
-                x1 = motionEvent.getX();
-                return true;
-            }
-            case MotionEvent.ACTION_UP: {
-
-                long clickDuration = SystemClock.currentThreadTimeMillis() - startClickTime;
-                float deltaX = motionEvent.getX() - x1;
-
-                if (esInfinito && !toInfinity && Math.abs(deltaX) > 200) {
-                    rotar(deltaX);
-                    seleccionados.clear();
-                    updateValores();
-
-                    return true;
-
-                } else if (clickDuration < MAX_CLICK_DURATION && Math.abs(deltaX) < 100) {
-                    int pos = valoresTxt.indexOf(n);
-                    int value = n.getValue();
-
-                    valoresTxt.set(pos, getNuevoNumero(value + 1));
-                    valoresTxt.add(pos + 1, getNuevoNumero(value + 2));
-
-                } else {
-                    if (seleccionados.size() == 2) {
-
-                        combinar(seleccionados.get(0), seleccionados.get(1));
-
-                    }
-                }
-                toInfinity = false;
-                seleccionados.clear();
-                updateValores();
-                return true;
-            }
-            case MotionEvent.ACTION_CANCEL: {
-                if (seleccionados.size() == 2) {
-
-                    combinar(seleccionados.get(0), seleccionados.get(1));
-
-                }
-                hs.requestDisallowInterceptTouchEvent(false);
-                seleccionados.clear();
-                toInfinity = false;
-                updateValores();
-                return true;
-            }
-            case MotionEvent.ACTION_MOVE: {
-                float deltaX = motionEvent.getX() - x1;
-                if (deltaX < 100 && SystemClock.currentThreadTimeMillis() - startClickTime > 35) {
-                    toInfinity = true;
-                    seleccionarNumero(n);
-                }
-                hs.requestDisallowInterceptTouchEvent(true);
-
-                if (seleccionados.size() < 2) {
-                    seleccionarNumero(n);
-                }
-
-
-                return true;
-            }
-
-
-        }
-        seleccionados.clear();
-        updateValores();
-
-        return true;
-    }
-
-    private void rotar(float deltaX) {
-        NumeroText n = null;
-
-        if (deltaX > 0) {
-            n = valoresTxt.remove(valoresTxt.size() - 1);
-            valoresTxt.add(0, n);
-        } else {
-
-            n = valoresTxt.remove(0);
-            valoresTxt.add(n);
-        }
-
-    }
-
     private void checkFinDeJuego() {
         Integer val = null;
         boolean iguales = true;
@@ -284,38 +179,6 @@ public class MainActivity extends Activity implements View.OnTouchListener, View
             findViewById(R.id.scroll).setVisibility(View.GONE);
         }
 
-    }
-
-    private boolean handlerToInfinityTouch(NumeroText n, MotionEvent motionEvent) {
-        switch (motionEvent.getAction()) {
-            case MotionEvent.ACTION_UP: {
-                if (seleccionados.size() >= 2) {
-                    toInfinity(seleccionados);
-                }
-                toInfinity = false;
-                seleccionados.clear();
-                updateValores();
-                return true;
-
-            }
-            case MotionEvent.ACTION_CANCEL: {
-                hs.requestDisallowInterceptTouchEvent(false);
-                toInfinity = false;
-                seleccionados.clear();
-                updateValores();
-                return true;
-            }
-            case MotionEvent.ACTION_MOVE: {
-                hs.requestDisallowInterceptTouchEvent(true);
-                seleccionarNumero(n);
-                return true;
-            }
-
-
-        }
-        seleccionados.clear();
-        updateValores();
-        return true;
     }
 
     private void toInfinity(List<NumeroText> seleccionados) {
@@ -346,8 +209,8 @@ public class MainActivity extends Activity implements View.OnTouchListener, View
 
     private boolean esInfinito(List<NumeroText> seleccionados) {
 
-        int posPosterior = valoresTxt.indexOf(seleccionados.get(seleccionados.size()-1)) + 1;
-        int posAnterior =  valoresTxt.indexOf(seleccionados.get(0)) -1;
+        int posPosterior = valoresTxt.indexOf(seleccionados.get(seleccionados.size() - 1)) + 1;
+        int posAnterior = valoresTxt.indexOf(seleccionados.get(0)) - 1;
         int index = 0;
         for (int i = posPosterior; i < valoresTxt.size(); i++) {
             if (index > (seleccionados.size() - 1)) {
@@ -372,59 +235,53 @@ public class MainActivity extends Activity implements View.OnTouchListener, View
         return true;
     }
 
-    private void seleccionarNumero(NumeroText n) {
-        int c;
-        if (n != null && !seleccionados.contains(n)) {
-            if (toInfinity && !esInfinito) {
-                c = getResources().getColor(android.R.color.holo_blue_dark);
-            } else {
-                c = getResources().getColor(android.R.color.holo_red_dark);
-            }
 
-
-            n.setTextColor(c);
-            n.setShadowLayer((float) 20, 0, 0, c);
-            seleccionados.add(n);
-        }
-    }
-
-
-    private void combinar(NumeroText n1, NumeroText n2) {
+    private void combinar(final NumeroText n1, NumeroText n2) {
 
         if ((getNuevoNumero(n1.getValue() + 1)).getValue() == n2.getValue()) {
-            int posn1 = valoresTxt.indexOf(n1);
-            int posn2 = valoresTxt.indexOf(n2);
+            final int posn1 = valoresTxt.indexOf(n1);
+            final int posn2 = valoresTxt.indexOf(n2);
+            if (posn1 > posn2) {
+                Animation myFadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.collapse_left);
+                n1.startAnimation(myFadeInAnimation);
+                myFadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.collapse_right);
+                n2.startAnimation(myFadeInAnimation);
+            } else {
+                Animation myFadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.collapse_right);
+                n1.startAnimation(myFadeInAnimation);
+                myFadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.collapse_left);
+                n2.startAnimation(myFadeInAnimation);
+            }
+
             valoresTxt.set(posn1, getNuevoNumero(n1.getValue() - 1));
             valoresTxt.remove(posn2);
-        }
-    }
 
-    private View findViewAtPosition(View parent, int x, int y) {
-        if (parent instanceof ViewGroup) {
-            ViewGroup viewGroup = (ViewGroup) parent;
-            for (int i = 0; i < viewGroup.getChildCount(); i++) {
-                View child = viewGroup.getChildAt(i);
-                View viewAtPosition = findViewAtPosition(child, x, y);
-                if (viewAtPosition != null) {
-                    return viewAtPosition;
-                }
-            }
-            return null;
-        } else {
-            Rect rect = new Rect();
-            parent.getGlobalVisibleRect(rect);
-            if (rect.contains(x, y)) {
-                return parent;
-            } else {
-                return null;
-            }
-        }
-    }
 
+        }
+
+    }
 
     @Override
-    public boolean onLongClick(View view) {
-        this.toInfinity = true;
-        return false;
+    public void selectedClick(List<NumeroText> selected, boolean afterLongClick) {
+        if (selected.size() == 1) {
+            int pos = valoresTxt.indexOf(selected.get(0));
+            int value = (selected.get(0)).getValue();
+            Animation myFadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.expand_right);
+            NumeroText n1 = getNuevoNumero(value + 1);
+            n1.startAnimation(myFadeInAnimation);
+            NumeroText n2 = getNuevoNumero(value + 2);
+            myFadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.expand_left);
+            n2.startAnimation(myFadeInAnimation);
+            valoresTxt.set(pos, n1);
+            valoresTxt.add(pos + 1, n2);
+        } else if (selected.size() > 1) {
+            if (afterLongClick) {
+                toInfinity(selected);
+            } else {
+                combinar(selected.get(0), selected.get(1));
+            }
+        }
+        updateValores();
     }
+
 }
