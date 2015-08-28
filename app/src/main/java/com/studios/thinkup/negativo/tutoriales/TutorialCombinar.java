@@ -59,6 +59,11 @@ public class TutorialCombinar extends Activity {
                         num2.setVisibility(View.VISIBLE);
                         num3.setVisibility(View.GONE);
                         hand.setVisibility(View.VISIBLE);
+                        int c = TutorialCombinar.this.getResources().getColor(android.R.color.black);
+                        num2.setTextColor(c);
+                        num2.setShadowLayer(1, 0, 0, c);
+                        num1.setTextColor(c);
+                        num1.setShadowLayer(1, 0, 0, c);
 
                     }
 
@@ -111,10 +116,10 @@ public class TutorialCombinar extends Activity {
                         num2.setTextColor(c);
                         num2.setShadowLayer(25, 0, 0, c);
                         Animation myFadeInAnimation = AnimationUtils.loadAnimation(TutorialCombinar.this, R.anim.collapse_right);
-                        myFadeInAnimation.setStartOffset(200);
+                        myFadeInAnimation.setStartOffset(500);
                         num1.startAnimation(myFadeInAnimation);
                         myFadeInAnimation = AnimationUtils.loadAnimation(TutorialCombinar.this, R.anim.collapse_left);
-                        myFadeInAnimation.setStartOffset(200);
+                        myFadeInAnimation.setStartOffset(500);
                         num2.startAnimation(myFadeInAnimation);
                         myFadeInAnimation.setAnimationListener(new Animation.AnimationListener() {
                             @Override
@@ -127,7 +132,7 @@ public class TutorialCombinar extends Activity {
                                 num2.setVisibility(View.GONE);
                                 num3.setVisibility(View.VISIBLE);
                                 hand.setVisibility(View.GONE);
-                                hand.startAnimation(as);
+                                //hand.startAnimation(as);
                             }
 
                             @Override
