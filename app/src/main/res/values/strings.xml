@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">ToInfinity</string>
     <string name="resetear">Resetear</string>
+    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="ayuda">Ayuda</string>
+    <string name="anterior">Anterior</string>
+    <string name="siguiente">Siguiente</string>
+    <string name="title_activity_tutorial_combinar">TutorialCombinar</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 </resources>

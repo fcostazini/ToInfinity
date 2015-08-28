@@ -14,9 +14,13 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.studios.thinkup.negativo.components.NumeroText;
 import com.studios.thinkup.negativo.components.handler.ISelectableHandler;
 import com.studios.thinkup.negativo.components.handler.TouchHandler;
+import com.studios.thinkup.negativo.tutoriales.TutorialCombinar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,17 +31,19 @@ public class MainActivity extends Activity implements ISelectableHandler {
 
     private HorizontalScrollView hs;
     private ArrayList<NumeroText> valoresTxt;
-    private TouchHandler handler;
-    private boolean toInfinity;
     private boolean esInfinito;
     private Integer startNum = 8;
     private float x1 = 0;
-    private long startClickTime;
-    private static final int MAX_CLICK_DURATION = 10;
+
+    private InterstitialAd mInterstitialAd;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(getResources().getString(R.string.banner_ad_unit_id));
+
         setContentView(R.layout.activity_main);
         TextView tBack = (TextView) findViewById(R.id.background);
         tBack.setVisibility(View.GONE);
@@ -59,10 +65,31 @@ public class MainActivity extends Activity implements ISelectableHandler {
             t = getNuevoNumero(i);
             valoresTxt.add(t);
         }
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("sony-d6503-BH91CE6Q16")
+                .build();
+
+        mInterstitialAd.loadAd(adRequest);
         updateValores();
     }
 
     private void reset() {
+
+        if (mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        } else {
+            restartActivity();
+        }
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                restartActivity();
+            }
+        });
+
+    }
+
+    private void restartActivity() {
         Intent intent = getIntent();
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         finish();
@@ -76,6 +103,7 @@ public class MainActivity extends Activity implements ISelectableHandler {
         //t.setOnLongClickListener(this);
 
         //t.setOnTouchListener(this);
+
         return t;
     }
 
@@ -118,12 +146,26 @@ public class MainActivity extends Activity implements ISelectableHandler {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_reset) {
-            reset();
-            return true;
+
+        switch (id) {
+            case R.id.action_reset:
+                reset();
+                return true;
+            case R.id.action_help:
+                help();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
         }
 
-        return super.onOptionsItemSelected(item);
+    }
+
+    private void help() {
+        Intent intent = new Intent(this, TutorialCombinar.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+
     }
 
     private String getInfiniteNumber(List<NumeroText> numeros) {
@@ -264,16 +306,7 @@ public class MainActivity extends Activity implements ISelectableHandler {
     @Override
     public void selectedClick(List<NumeroText> selected, boolean afterLongClick) {
         if (selected.size() == 1) {
-            int pos = valoresTxt.indexOf(selected.get(0));
-            int value = (selected.get(0)).getValue();
-            Animation myFadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.expand_right);
-            NumeroText n1 = getNuevoNumero(value + 1);
-            n1.startAnimation(myFadeInAnimation);
-            NumeroText n2 = getNuevoNumero(value + 2);
-            myFadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.expand_left);
-            n2.startAnimation(myFadeInAnimation);
-            valoresTxt.set(pos, n1);
-            valoresTxt.add(pos + 1, n2);
+            romper(selected);
         } else if (selected.size() > 1) {
             if (afterLongClick) {
                 toInfinity(selected);
@@ -282,6 +315,19 @@ public class MainActivity extends Activity implements ISelectableHandler {
             }
         }
         updateValores();
+    }
+
+    private void romper(List<NumeroText> selected) {
+        int pos = valoresTxt.indexOf(selected.get(0));
+        int value = (selected.get(0)).getValue();
+        Animation myFadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.expand_right);
+        NumeroText n1 = getNuevoNumero(value + 1);
+        n1.startAnimation(myFadeInAnimation);
+        NumeroText n2 = getNuevoNumero(value + 2);
+        myFadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.expand_left);
+        n2.startAnimation(myFadeInAnimation);
+        valoresTxt.set(pos, n1);
+        valoresTxt.add(pos + 1, n2);
     }
 
 }

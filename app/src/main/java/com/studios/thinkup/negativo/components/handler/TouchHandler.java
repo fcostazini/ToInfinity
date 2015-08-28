@@ -17,7 +17,7 @@ import java.util.Vector;
  * Handler para movimientos de Touch
  */
 public class TouchHandler implements View.OnTouchListener {
-    private static final Integer LONG_CLICK = 500;
+    private static final Integer LONG_CLICK = 3000;
     private long holdDuration;
     private Float prevX;
     private Float prevY;
@@ -28,6 +28,7 @@ public class TouchHandler implements View.OnTouchListener {
     private Integer maxElements;
     private Integer maxAfterLongClickElements;
     private ISelectableHandler handler;
+
 
     private boolean afterLongClick;
 
@@ -52,7 +53,7 @@ public class TouchHandler implements View.OnTouchListener {
         Point delta = new Point((int) Math.abs(motionEvent.getX() - prevX), (int) Math.abs(motionEvent.getY() - prevY));
         Point direction = new Point(prevX.compareTo(motionEvent.getX()), prevY.compareTo(motionEvent.getY()));
         if (!afterLongClick && isHolding) {
-            holdDuration += SystemClock.currentThreadTimeMillis() - startClickTime;
+            holdDuration += SystemClock.elapsedRealtime() - startClickTime;
             afterLongClick = holdDuration >= LONG_CLICK;
         } else {
             holdDuration = 0;
@@ -68,11 +69,8 @@ public class TouchHandler implements View.OnTouchListener {
         }
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN: {
-                startClickTime = SystemClock.currentThreadTimeMillis();
-                isHolding = true;
-                holdDuration = 0;
-                afterLongClick = false;
-                selected.clear();
+                startClickTime = SystemClock.elapsedRealtime();
+                clearStatus();
                 break;
             }
             case MotionEvent.ACTION_UP: {
@@ -85,10 +83,7 @@ public class TouchHandler implements View.OnTouchListener {
             }
             case MotionEvent.ACTION_CANCEL: {
                 container.getParent().requestDisallowInterceptTouchEvent(false);
-                isHolding = true;
-                holdDuration = 0;
-                afterLongClick = false;
-                selected.clear();
+                clearStatus();
                 break;
             }
             case MotionEvent.ACTION_MOVE: {
@@ -96,8 +91,28 @@ public class TouchHandler implements View.OnTouchListener {
                 if (hasMoved(delta)) {
                     isHolding = false;
                 }
+
                 container.getParent().requestDisallowInterceptTouchEvent(true);
-                this.selectView(v);
+
+
+                if (v != null) {
+                    int c;
+
+                    if (afterLongClick) {
+                        this.selectView(v);
+                        c = container.getResources().getColor(android.R.color.holo_blue_dark);
+                        v.setTextColor(c);
+                        v.setShadowLayer(25, 0, 0, c);
+                    } else {
+                        if (selected.size() <= maxElements && this.selectView(v)) {
+                            c = container.getResources().getColor(android.R.color.holo_green_dark);
+                            v.setTextColor(c);
+                            v.setShadowLayer(25, 0, 0, c);
+                        }
+                    }
+
+
+                }
                 break;
             }
         }
@@ -108,25 +123,33 @@ public class TouchHandler implements View.OnTouchListener {
         return true;
     }
 
-    private void selectView(NumeroText v) {
+    private void clearStatus() {
+        isHolding = true;
+        holdDuration = 0;
+        afterLongClick = false;
+        selected.clear();
 
-        int c;
+    }
+
+    private boolean selectView(NumeroText v) {
         if (v != null && !selected.contains(v)) {
             int limit;
             if (afterLongClick) {
                 limit = maxAfterLongClickElements;
-                c = container.getResources().getColor(android.R.color.holo_blue_dark);
+
             } else {
                 limit = maxElements;
-                c = container.getResources().getColor(android.R.color.holo_green_dark);
+
             }
             if (selected.size() < limit) {
                 selected.add(v);
-                v.setTextColor(c);
-                v.setShadowLayer((float) 20, 0, 0, c);
+                return true;
+
+
             }
 
         }
+        return false;
 
 
     }

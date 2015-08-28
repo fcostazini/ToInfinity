@@ -3,4 +3,7 @@
     <item android:id="@+id/action_reset" android:title="@string/resetear"
         android:icon="@drawable/ic_reset"
         android:orderInCategory="100" android:showAsAction="ifRoom" />
+    <item android:id="@+id/action_help" android:title="@string/ayuda"
+        android:icon="@drawable/ic_help"
+        android:orderInCategory="100" android:showAsAction="ifRoom" />
 </menu>
