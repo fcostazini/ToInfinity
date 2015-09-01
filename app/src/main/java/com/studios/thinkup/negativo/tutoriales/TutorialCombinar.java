@@ -3,6 +3,7 @@ package com.studios.thinkup.negativo.tutoriales;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -19,7 +20,7 @@ import android.widget.TextView;
 
 import com.studios.thinkup.negativo.R;
 
-public class TutorialCombinar extends Activity {
+public class TutorialCombinar extends AppCompatActivity {
     Animation transition;
     AnimationSet as;
     TextView num2;
@@ -88,7 +89,7 @@ public class TutorialCombinar extends Activity {
                 int[] location = new int[2];
                 num1.getLocationOnScreen(location);
                 hand.setX(location[0] + num1.getPaddingLeft() / 2 + num1.getWidth() / 2);
-                hand.setY(location[1]);
+                hand.setY(location[1] - (num1.getPaddingTop()) / 2);
 
                 num2.getLocationOnScreen(location);
                 transition = new TranslateAnimation(0f, (location[0] + num2.getPaddingLeft() / 2 + num2.getWidth() / 2) - hand.getX(), 0f, 0f);

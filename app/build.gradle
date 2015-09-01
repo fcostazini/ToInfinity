@@ -9,13 +9,13 @@ android {
         release {
             keyAlias 'toinfinity'
             keyPassword 'Eusold1906@@'
-            storeFile file('C:/Users/Facundo/Desktop/fcostazinikeystore')
+            storeFile file('C:/Users/fcostazini/Desktop/fcostazinikeystore')
             storePassword 'Eusold1906@@'
         }
         debug {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
-            storeFile file('C:/Users/Facundo/.android/debug.keystore')
+            storeFile file('C:/Users/fcostazini/.android/debug.keystore')
             storePassword 'android'
         }
     }
@@ -44,7 +44,6 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:support-v4:22.2.1'
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'com.google.android.gms:play-services:7.8.0'
     compile 'com.google.android.gms:play-services-ads:7.8.0'

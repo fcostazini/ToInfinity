@@ -1,9 +1,9 @@
 package com.studios.thinkup.negativo;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Random;
 
 
-public class MainActivity extends Activity implements ISelectableHandler {
+public class MainActivity extends AppCompatActivity implements ISelectableHandler {
 
     private HorizontalScrollView hs;
     private Integer startNum = 8;
@@ -47,6 +47,8 @@ public class MainActivity extends Activity implements ISelectableHandler {
         mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId(getResources().getString(R.string.banner_ad_unit_id));
         setContentView(R.layout.activity_main);
+
+
         TextView back = (TextView) findViewById(R.id.background);
         Animation marq = AnimationUtils.loadAnimation(this, R.anim.marq_izq);
         AnimationSet as = new AnimationSet(true);

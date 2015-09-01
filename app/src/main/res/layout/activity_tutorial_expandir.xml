@@ -75,7 +75,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Haciendo click sobre un número lo cmbertirá en sus dos números mayores siguientes"
+        android:text="Haciendo click sobre un número lo convertirá en sus dos números mayores siguientes"
         android:id="@+id/textView2"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"

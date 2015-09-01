@@ -49,9 +49,6 @@ public class TouchHandler implements View.OnTouchListener {
         if (prevX == null) {
             prevX = motionEvent.getX();
         }
-
-        Point delta = new Point((int) Math.abs(motionEvent.getX() - prevX), (int) Math.abs(motionEvent.getY() - prevY));
-        Point direction = new Point(prevX.compareTo(motionEvent.getX()), prevY.compareTo(motionEvent.getY()));
         if (!afterLongClick && isHolding) {
             holdDuration += SystemClock.elapsedRealtime() - startClickTime;
             afterLongClick = holdDuration >= LONG_CLICK;
@@ -61,12 +58,7 @@ public class TouchHandler implements View.OnTouchListener {
         if (!afterLongClick && isLongClick()) {
             afterLongClick = true;
         }
-        NumeroText v;
-        try {
-            v = (NumeroText) findViewAtPosition(container, (int) motionEvent.getX(), (int) motionEvent.getY());
-        } catch (ClassCastException e) {
-            v = null;
-        }
+
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN: {
                 startClickTime = SystemClock.elapsedRealtime();
@@ -74,6 +66,18 @@ public class TouchHandler implements View.OnTouchListener {
                 break;
             }
             case MotionEvent.ACTION_UP: {
+                if (holdDuration < 200) {
+                    NumeroText v;
+                    try {
+                        v = (NumeroText) findViewAtPosition(container, (int) motionEvent.getX(), (int) motionEvent.getY());
+                        if (v != null) {
+                            selectView(v);
+                        }
+                    } catch (ClassCastException e) {
+                        v = null;
+                    }
+
+                }
                 if (selected.size() > 0) {
                     handler.selectedClick(selected, afterLongClick);
                 }
@@ -87,8 +91,14 @@ public class TouchHandler implements View.OnTouchListener {
                 break;
             }
             case MotionEvent.ACTION_MOVE: {
+                NumeroText v;
+                try {
+                    v = (NumeroText) findViewAtPosition(container, (int) motionEvent.getX(), (int) motionEvent.getY());
+                } catch (ClassCastException e) {
+                    v = null;
+                }
 
-                if (hasMoved(delta)) {
+                if (hasMoved(new Point((int) Math.abs(motionEvent.getX() - prevX), (int) Math.abs(motionEvent.getY() - prevY)))) {
                     isHolding = false;
                 }
 
