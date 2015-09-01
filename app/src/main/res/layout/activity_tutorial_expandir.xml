@@ -9,21 +9,22 @@
 
 
     <TextView
-
+        class="com.studios.thinkup.negativo.components.NumeroText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView3"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentLeft="false"
         android:layout_alignParentStart="false"
         android:textColor="#000000"
-        android:text="3"
+        android:text="4"
         android:textSize="90sp"
         android:padding="10dp"
         android:textAlignment="center"
-        android:visibility="gone"
+        android:visibility="visible"
         android:gravity="center_horizontal"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="20dp" />
+        android:layout_alignParentRight="false"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -31,7 +32,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/linearLayout"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="20dp"
+        android:visibility="visible">
 
         <TextView
             android:layout_width="wrap_content"
@@ -41,12 +43,13 @@
             android:layout_alignParentLeft="false"
             android:layout_alignParentStart="false"
             android:textColor="#000000"
-            android:text="4"
+            android:text="5"
             android:textSize="90sp"
             android:layout_centerInParent="true"
             android:padding="10dp"
             android:gravity="center"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:visibility="gone" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -56,14 +59,15 @@
             android:layout_alignParentLeft="false"
             android:layout_alignParentStart="false"
             android:textColor="#000000"
-            android:text="5"
+            android:text="6"
             android:layout_toEndOf="@id/view1"
             android:layout_toRightOf="@id/view1"
             android:textSize="90sp"
             android:padding="10dp"
             android:layout_centerInParent="true"
             android:gravity="center"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:visibility="gone" />
 
     </LinearLayout>
 
@@ -71,30 +75,43 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Seleccionando 2 números continuos consecutivos, se obtiene un el número anterior al más chico"
+        android:text="Haciendo click sobre un número lo cmbertirá en sus dos números mayores siguientes"
         android:id="@+id/textView2"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <Button
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/siguiente"
-        android:id="@+id/btn_siguiente"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerInParent="true"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/anterior"
+            android:id="@+id/btn_anterior"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_weight="0.5" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/siguiente"
+            android:id="@+id/btn_siguiente"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_weight="0.5" />
+    </LinearLayout>
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/hand"
         android:src="@drawable/point"
-        android:layout_above="@+id/btn_siguiente"
-        android:layout_alignLeft="@+id/linearLayout"
-        android:layout_alignStart="@+id/linearLayout"
-        android:layout_marginLeft="104dp"
-        android:layout_marginStart="104dp"
         android:visibility="invisible" />
 
 </RelativeLayout>

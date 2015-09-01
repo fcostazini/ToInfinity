@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.studios.thinkup.negativo" >
+    package="com.studios.thinkup.negativo">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -9,7 +9,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/MyTheme" >
+        android:theme="@style/MyTheme">
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -17,7 +17,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:screenOrientation="landscape" >
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,8 +31,35 @@
         <activity
             android:name=".tutoriales.TutorialCombinar"
             android:label="@string/title_activity_tutorial_combinar"
-            android:screenOrientation="landscape"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="landscape">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.studios.thinkup.negativo.MainActivity" />
+        </activity>
+        <activity
+            android:name=".tutoriales.TutorialExpandir"
+            android:label="@string/title_activity_tutorial_expandir"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="landscape">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.studios.thinkup.negativo.MainActivity" />
+        </activity>
+        <activity
+            android:name=".tutoriales.TutorialSimplificar"
+            android:label="@string/title_activity_tutorial_expandir"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="landscape">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.studios.thinkup.negativo.MainActivity" />
+        </activity>
+        <activity
+            android:name=".tutoriales.TutorialGanador"
+            android:label="@string/title_activity_tutorial_expandir"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="landscape">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.studios.thinkup.negativo.MainActivity" />

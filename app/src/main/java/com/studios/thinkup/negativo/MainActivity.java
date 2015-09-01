@@ -7,9 +7,14 @@ import android.os.SystemClock;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.RotateAnimation;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -30,12 +35,10 @@ import java.util.Random;
 public class MainActivity extends Activity implements ISelectableHandler {
 
     private HorizontalScrollView hs;
-    private ArrayList<NumeroText> valoresTxt;
-    private boolean esInfinito;
     private Integer startNum = 8;
-    private float x1 = 0;
-
+    private LinearLayout valoresLy;
     private InterstitialAd mInterstitialAd;
+    float[] alphas = {0.20f, 0.17f, 0.14f, 0.11f, 0.07f, 0.04f, 0.01f};
 
 
     @Override
@@ -43,34 +46,31 @@ public class MainActivity extends Activity implements ISelectableHandler {
         super.onCreate(savedInstanceState);
         mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId(getResources().getString(R.string.banner_ad_unit_id));
-
         setContentView(R.layout.activity_main);
-        TextView tBack = (TextView) findViewById(R.id.background);
-        tBack.setVisibility(View.GONE);
-        valoresTxt = new ArrayList<>();
-        final LinearLayout valoresLy = (LinearLayout) findViewById(R.id.ly_numeros);
+        TextView back = (TextView) findViewById(R.id.background);
+        Animation marq = AnimationUtils.loadAnimation(this, R.anim.marq_izq);
+        AnimationSet as = new AnimationSet(true);
+        as.setFillAfter(true);
+        as.addAnimation(marq);
+        back.startAnimation(as);
+        back.setVisibility(View.VISIBLE);
+        valoresLy = (LinearLayout) findViewById(R.id.ly_numeros);
         hs = (HorizontalScrollView) findViewById(R.id.scroll);
         valoresLy.setOnTouchListener(new TouchHandler(valoresLy, this, 2, 9999));
         ArrayList<Integer> valores = generarValores(startNum);
         findViewById(R.id.ly_fin).setVisibility(View.GONE);
         findViewById(R.id.scroll).setVisibility(View.VISIBLE);
-        findViewById(R.id.btn_rejugar).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                reset();
-            }
-        });
+
         NumeroText t = null;
         for (Integer i : valores) {
-            t = getNuevoNumero(i);
-            valoresTxt.add(t);
+            valoresLy.addView(getNuevoNumero(i));
         }
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice("sony-d6503-BH91CE6Q16")
                 .build();
 
         mInterstitialAd.loadAd(adRequest);
-        updateValores();
+        deseleccionarValores();
     }
 
     private void reset() {
@@ -168,9 +168,11 @@ public class MainActivity extends Activity implements ISelectableHandler {
 
     }
 
-    private String getInfiniteNumber(List<NumeroText> numeros) {
+    private String getInfiniteNumber() {
         String s = "";
-        for (NumeroText n : numeros) {
+        NumeroText n = null;
+        for (int i = 0; i < valoresLy.getChildCount(); i++) {
+            n = (NumeroText) valoresLy.getChildAt(i);
             s += String.valueOf(n.getValue()) + " ";
         }
 
@@ -181,108 +183,124 @@ public class MainActivity extends Activity implements ISelectableHandler {
 
     }
 
-    private void updateValores() {
-        LinearLayout valoresLy = (LinearLayout) findViewById(R.id.ly_numeros);
-        int c;
-        if (esInfinito) {
-            c = getResources().getColor(android.R.color.holo_blue_dark);
-            mostrarFondoInfinito(valoresTxt);
+    private void deseleccionarValores() {
+
+        NumeroText n;
+        for (int i = 0; i < valoresLy.getChildCount(); i++) {
+            n = (NumeroText) valoresLy.getChildAt(i);
+            n.setTextColor(getResources().getColor(android.R.color.black));
+            n.setShadowLayer(0, 0, 0, getResources().getColor(android.R.color.black));
+        }
+
+    }
+
+
+    private boolean checkFinDeJuego() {
+        if (valoresLy.getChildCount() == 2) {
+            return ((NumeroText) valoresLy.getChildAt(0)).getValue()
+                    == ((NumeroText) valoresLy.getChildAt(1)).getValue();
+        }
+        return valoresLy.getChildCount() == 1;
+
+    }
+
+    private boolean simplificar(List<NumeroText> seleccionados) {
+        if (seleccionados.size() < 3) {
+            return false;
         } else {
-            c = getResources().getColor(android.R.color.black);
-        }
-        valoresLy.removeAllViews();
-
-        for (NumeroText n : valoresTxt) {
-            if (n.getParent() != null) {
-                ((ViewGroup) n.getParent()).removeView(n);
-            }
-            n.setTextColor(c);
-            n.setShadowLayer(0, 0, 0, c);
-            valoresLy.addView(n);
-        }
-
-        checkFinDeJuego();
-    }
-
-    private void checkFinDeJuego() {
-        Integer val = null;
-        boolean iguales = true;
-        for (NumeroText n : valoresTxt) {
-            if (val == null)
-                val = n.getValue();
-            if (!val.equals(n.getValue())) {
-                iguales = false;
-                break;
-            }
-        }
-        if (iguales) {
-            mostrarFondoInfinito(valoresTxt);
-            findViewById(R.id.ly_fin).setVisibility(View.VISIBLE);
-            findViewById(R.id.scroll).setVisibility(View.GONE);
-        }
-
-    }
-
-    private void toInfinity(List<NumeroText> seleccionados) {
-        if (esInfinito) {
-            return;
-        }
-        this.esInfinito = esInfinito(seleccionados);
-        if (esInfinito) {
-            mostrarFondoInfinito(seleccionados);
-        }
-        if (esInfinito) {
-            valoresTxt.clear();
+            int i = seleccionados.get(0).getValue();
             for (NumeroText n : seleccionados) {
-                valoresTxt.add(n);
+                if (n.getValue() != i) {
+                    return false;
+                }
             }
+            int index = 0;
+            for (NumeroText n : seleccionados) {
+
+                if (index != 0) {
+                    n.startAnimation(createConsumeAnimation(index, seleccionados.get(0), n));
+                }
+
+                index++;
+            }
+
+            return true;
         }
+
 
     }
 
-    private void mostrarFondoInfinito(List<NumeroText> seleccionados) {
-        TextView t = (TextView) findViewById(R.id.background);
-        t.setVisibility(View.VISIBLE);
-        Animation myAnimation = AnimationUtils.loadAnimation(this, R.anim.marq_izq);
-        t.startAnimation(myAnimation);
-        t.setText(getInfiniteNumber(seleccionados));
+    private Animation createConsumeAnimation(float distance, NumeroText to, final NumeroText from) {
+
+        AnimationSet as = new AnimationSet(true);
+
+        if (valoresLy.indexOfChild(to) < valoresLy.indexOfChild(from)) {
+            distance = distance * -1;
+        }
+        Animation rotar = new RotateAnimation(0f, 360f * 2, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        Animation achicar = new ScaleAnimation(1.15f, 0, 1.15f, 0, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        Animation desplazar = new TranslateAnimation(0f, 150f * distance, 0, 0);
+
+        rotar.setInterpolator(new AccelerateDecelerateInterpolator());
+        rotar.setDuration(300);
+        rotar.setFillAfter(true);
+
+        achicar.setInterpolator(new BounceInterpolator());
+        achicar.setDuration(400);
+        achicar.setFillAfter(true);
+
+        desplazar.setInterpolator(new BounceInterpolator());
+        desplazar.setDuration(300);
+        desplazar.setFillAfter(true);
+
+        as.addAnimation(rotar);
+        as.addAnimation(achicar);
+        as.addAnimation(desplazar);
+        as.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                valoresLy.post(new Runnable() {
+                    public void run() {
+                        valoresLy.removeView(from);
+                        finJuego();
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        return as;
 
     }
 
-    private boolean esInfinito(List<NumeroText> seleccionados) {
-
-        int posPosterior = valoresTxt.indexOf(seleccionados.get(seleccionados.size() - 1)) + 1;
-        int posAnterior = valoresTxt.indexOf(seleccionados.get(0)) - 1;
-        int index = 0;
-        for (int i = posPosterior; i < valoresTxt.size(); i++) {
-            if (index > (seleccionados.size() - 1)) {
-                index = 0;
-            }
-            if (seleccionados.get(index).getValue() != valoresTxt.get(i).getValue()) {
-                return false;
-            }
-            index++;
-        }
-        index = seleccionados.size() - 1;
-        for (int i = posAnterior; i >= 0; i--) {
-            if (index < 0) {
-                index = seleccionados.size() - 1;
-            }
-            if (seleccionados.get(index).getValue() != valoresTxt.get(i).getValue()) {
-                return false;
-            }
-            index--;
+    private void mostrarFondoInfinito(int progress) {
+        final TextView t = (TextView) findViewById(R.id.background);
+        float to = 0;
+        if (progress <= 7) {
+            t.setText(getInfiniteNumber());
+            to = alphas[progress - 1];
         }
 
-        return true;
+        t.setAlpha(to);
+
+
     }
-
 
     private void combinar(final NumeroText n1, NumeroText n2) {
 
         if ((getNuevoNumero(n1.getValue() + 1)).getValue() == n2.getValue()) {
-            final int posn1 = valoresTxt.indexOf(n1);
-            final int posn2 = valoresTxt.indexOf(n2);
+            final int posn1 = valoresLy.indexOfChild(n1);
+            final int posn2 = valoresLy.indexOfChild(n2);
             if (posn1 > posn2) {
                 Animation myFadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.collapse_left);
                 n1.startAnimation(myFadeInAnimation);
@@ -295,8 +313,10 @@ public class MainActivity extends Activity implements ISelectableHandler {
                 n2.startAnimation(myFadeInAnimation);
             }
 
-            valoresTxt.set(posn1, getNuevoNumero(n1.getValue() - 1));
-            valoresTxt.remove(posn2);
+            valoresLy.removeViewAt(posn1);
+            valoresLy.addView(getNuevoNumero(n1.getValue() - 1), posn1);
+            valoresLy.removeViewAt(posn2);
+            finJuego();
 
 
         }
@@ -309,16 +329,16 @@ public class MainActivity extends Activity implements ISelectableHandler {
             romper(selected);
         } else if (selected.size() > 1) {
             if (afterLongClick) {
-                toInfinity(selected);
+                simplificar(selected);
             } else {
                 combinar(selected.get(0), selected.get(1));
             }
         }
-        updateValores();
+        deseleccionarValores();
     }
 
     private void romper(List<NumeroText> selected) {
-        int pos = valoresTxt.indexOf(selected.get(0));
+        int pos = valoresLy.indexOfChild(selected.get(0));
         int value = (selected.get(0)).getValue();
         Animation myFadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.expand_right);
         NumeroText n1 = getNuevoNumero(value + 1);
@@ -326,8 +346,19 @@ public class MainActivity extends Activity implements ISelectableHandler {
         NumeroText n2 = getNuevoNumero(value + 2);
         myFadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.expand_left);
         n2.startAnimation(myFadeInAnimation);
-        valoresTxt.set(pos, n1);
-        valoresTxt.add(pos + 1, n2);
+        valoresLy.removeViewAt(pos);
+        valoresLy.addView(n1, pos);
+        valoresLy.addView(n2, pos + 1);
+        finJuego();
+
+    }
+
+    private void finJuego() {
+        mostrarFondoInfinito(valoresLy.getChildCount());
+        if (checkFinDeJuego()) {
+            hs.setVisibility(View.GONE);
+            findViewById(R.id.ly_fin).setVisibility(View.VISIBLE);
+        }
     }
 
 }
