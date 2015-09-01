@@ -5,7 +5,9 @@
     <string name="ayuda">Ayuda</string>
     <string name="anterior">Anterior</string>
     <string name="siguiente">Siguiente</string>
-    <string name="title_activity_tutorial_combinar">TutorialCombinar</string>
+    <string name="title_activity_tutorial_combinar">Combinar</string>
+    <string name="title_activity_tutorial_expandir">Expandir</string>
+    <string name="title_activity_tutorial_simplificar">Simplificar</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
