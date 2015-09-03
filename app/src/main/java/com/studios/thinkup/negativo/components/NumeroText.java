@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.studios.thinkup.negativo.R;
@@ -36,6 +37,7 @@ public class NumeroText extends TextView {
                 getResources().getDimension(R.dimen.number_font));
         this.setGravity(Gravity.CENTER);
         this.setIncludeFontPadding(false);
+        this.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
     }
 
     public NumeroText(Context context, AttributeSet attrs) {

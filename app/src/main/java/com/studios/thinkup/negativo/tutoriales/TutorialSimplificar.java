@@ -166,7 +166,7 @@ public class TutorialSimplificar extends AppCompatActivity {
 
                     }
                 });
-                Animation select = new AlphaAnimation(1, 1);
+                Animation select = new TranslateAnimation(0, 0,0,0);
                 select.setDuration(100);
                 select.setStartOffset(2500);
                 select.setInterpolator(new LinearInterpolator());

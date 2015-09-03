@@ -48,7 +48,7 @@
         </activity>
         <activity
             android:name=".tutoriales.TutorialSimplificar"
-            android:label="@string/title_activity_tutorial_expandir"
+            android:label="@string/title_activity_tutorial_simplificar"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="landscape">
             <meta-data
@@ -57,7 +57,7 @@
         </activity>
         <activity
             android:name=".tutoriales.TutorialGanador"
-            android:label="@string/title_activity_tutorial_expandir"
+            android:label="@string/title_activity_tutorial_ganar"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="landscape">
             <meta-data

@@ -1,6 +1,5 @@
 package com.studios.thinkup.negativo.tutoriales;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -51,8 +50,8 @@ public class TutorialCombinar extends AppCompatActivity {
 
 
                 as = new AnimationSet(true);
-                as.setFillAfter(true);
                 Animation alpha = new AlphaAnimation(0, 1);
+                alpha.setFillBefore(true);
                 alpha.setStartOffset(400);
                 alpha.setDuration(400);
                 as.addAnimation(alpha);
@@ -88,6 +87,7 @@ public class TutorialCombinar extends AppCompatActivity {
                 num3 = (TextView) findViewById(R.id.textView3);
                 int[] location = new int[2];
                 num1.getLocationOnScreen(location);
+
                 hand.setX(location[0] + num1.getPaddingLeft() / 2 + num1.getWidth() / 2);
                 hand.setY(location[1] - (num1.getPaddingTop()) / 2);
 
@@ -104,6 +104,7 @@ public class TutorialCombinar extends AppCompatActivity {
                 Animation alpha2 = new AlphaAnimation(1, 0);
                 as.addAnimation(alpha2);
                 alpha2.setDuration(400);
+                alpha2.setFillAfter(true);
                 alpha2.setInterpolator(new LinearInterpolator());
                 alpha2.setStartOffset(2500);
 
@@ -112,6 +113,7 @@ public class TutorialCombinar extends AppCompatActivity {
                 alpha3.setDuration(1000);
                 alpha3.setInterpolator(new LinearInterpolator());
                 alpha3.setStartOffset(3000);
+                alpha3.setFillAfter(true);
                 alpha3.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
@@ -157,7 +159,6 @@ public class TutorialCombinar extends AppCompatActivity {
                                 num1.setVisibility(View.GONE);
                                 num2.setVisibility(View.GONE);
                                 num3.setVisibility(View.VISIBLE);
-                                hand.setVisibility(View.GONE);
                                 //hand.startAnimation(as);
                             }
 

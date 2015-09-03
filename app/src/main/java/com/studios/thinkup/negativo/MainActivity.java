@@ -4,10 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
@@ -44,35 +47,41 @@ public class MainActivity extends AppCompatActivity implements ISelectableHandle
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId(getResources().getString(R.string.banner_ad_unit_id));
-        setContentView(R.layout.activity_main);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.mipmap.ic_home);
+        getSupportActionBar().setTitle("");
+        if (savedInstanceState == null) {
+            mInterstitialAd = new InterstitialAd(this);
+            mInterstitialAd.setAdUnitId(getResources().getString(R.string.banner_ad_unit_id));
+            setContentView(R.layout.activity_main);
 
 
-        TextView back = (TextView) findViewById(R.id.background);
-        Animation marq = AnimationUtils.loadAnimation(this, R.anim.marq_izq);
-        AnimationSet as = new AnimationSet(true);
-        as.setFillAfter(true);
-        as.addAnimation(marq);
-        back.startAnimation(as);
-        back.setVisibility(View.VISIBLE);
-        valoresLy = (LinearLayout) findViewById(R.id.ly_numeros);
-        hs = (HorizontalScrollView) findViewById(R.id.scroll);
-        valoresLy.setOnTouchListener(new TouchHandler(valoresLy, this, 2, 9999));
-        ArrayList<Integer> valores = generarValores(startNum);
-        findViewById(R.id.ly_fin).setVisibility(View.GONE);
-        findViewById(R.id.scroll).setVisibility(View.VISIBLE);
+            TextView back = (TextView) findViewById(R.id.background);
+            Animation marq = AnimationUtils.loadAnimation(this, R.anim.marq_izq);
+            AnimationSet as = new AnimationSet(true);
+            as.setFillAfter(true);
+            as.addAnimation(marq);
+            back.startAnimation(as);
+            back.setVisibility(View.VISIBLE);
+            valoresLy = (LinearLayout) findViewById(R.id.ly_numeros);
+            hs = (HorizontalScrollView) findViewById(R.id.scroll);
+            valoresLy.setOnTouchListener(new TouchHandler(valoresLy, this, 2, 9999));
+            ArrayList<Integer> valores = generarValores(startNum);
+            findViewById(R.id.ly_fin).setVisibility(View.GONE);
+            findViewById(R.id.scroll).setVisibility(View.VISIBLE);
 
-        NumeroText t = null;
-        for (Integer i : valores) {
-            valoresLy.addView(getNuevoNumero(i));
+            NumeroText t = null;
+            for (Integer i : valores) {
+                valoresLy.addView(getNuevoNumero(i));
+            }
+            valoresLy.refreshDrawableState();
+            AdRequest adRequest = new AdRequest.Builder()
+                    .addTestDevice("sony-d6503-BH91CE6Q16")
+                    .build();
+
+            mInterstitialAd.loadAd(adRequest);
+            deseleccionarValores();
         }
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice("sony-d6503-BH91CE6Q16")
-                .build();
-
-        mInterstitialAd.loadAd(adRequest);
-        deseleccionarValores();
     }
 
     private void reset() {
@@ -121,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements ISelectableHandle
         return val;
     }
 
+
     private ArrayList<Integer> generarValores(Integer startNum) {
         ArrayList<Integer> valores = new ArrayList<>();
         Random r = new Random(SystemClock.currentThreadTimeMillis());
@@ -128,7 +138,6 @@ public class MainActivity extends AppCompatActivity implements ISelectableHandle
         for (int i = 0; i < startNum; i++) {
             valores.add(r.nextInt(6) + 1);
         }
-
 
         return valores;
     }
@@ -225,7 +234,6 @@ public class MainActivity extends AppCompatActivity implements ISelectableHandle
 
                 index++;
             }
-
             return true;
         }
 
@@ -299,7 +307,6 @@ public class MainActivity extends AppCompatActivity implements ISelectableHandle
     }
 
     private void combinar(final NumeroText n1, NumeroText n2) {
-
         if ((getNuevoNumero(n1.getValue() + 1)).getValue() == n2.getValue()) {
             final int posn1 = valoresLy.indexOfChild(n1);
             final int posn2 = valoresLy.indexOfChild(n2);
@@ -318,6 +325,7 @@ public class MainActivity extends AppCompatActivity implements ISelectableHandle
             valoresLy.removeViewAt(posn1);
             valoresLy.addView(getNuevoNumero(n1.getValue() - 1), posn1);
             valoresLy.removeViewAt(posn2);
+
             finJuego();
 
 
@@ -351,16 +359,52 @@ public class MainActivity extends AppCompatActivity implements ISelectableHandle
         valoresLy.removeViewAt(pos);
         valoresLy.addView(n1, pos);
         valoresLy.addView(n2, pos + 1);
+
         finJuego();
 
     }
 
     private void finJuego() {
+        valoresLy.invalidate();
+        valoresLy.requestLayout();
         mostrarFondoInfinito(valoresLy.getChildCount());
         if (checkFinDeJuego()) {
-            hs.setVisibility(View.GONE);
-            findViewById(R.id.ly_fin).setVisibility(View.VISIBLE);
+            Animation alpha = new AlphaAnimation(1, 0);
+            alpha.setFillAfter(true);
+            alpha.setDuration(500);
+            alpha.setInterpolator(new AccelerateDecelerateInterpolator());
+            hs.startAnimation(alpha);
+
+            LinearLayout ly = (LinearLayout) findViewById(R.id.ly_fin);
+            ly.setVisibility(View.VISIBLE);
+
+            String mensajeWin = this.getResources().getString(R.string.winner);
+            TextView t;
+            Animation a = null;
+            ly.removeAllViews();
+            for (int i = 0; i < mensajeWin.length(); i++) {
+                t = createLetter(mensajeWin.substring(i, i + 1));
+                a = AnimationUtils.loadAnimation(this, R.anim.zoom_out);
+                a.setStartOffset(200 * i);
+                t.startAnimation(a);
+                ly.addView(t);
+            }
+            ly.refreshDrawableState();
+
         }
+    }
+
+    private TextView createLetter(String letter) {
+        TextView t = new TextView(this);
+        t.setText(letter);
+        t.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                getResources().getDimension(R.dimen.number_font));
+        t.setGravity(Gravity.CENTER);
+        t.setIncludeFontPadding(false);
+        t.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
+        t.setShadowLayer(21, 0, 0, getResources().getColor(android.R.color.holo_green_light));
+        t.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        return t;
     }
 
 }
