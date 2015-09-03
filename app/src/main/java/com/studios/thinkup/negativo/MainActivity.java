@@ -50,39 +50,40 @@ public class MainActivity extends AppCompatActivity implements ISelectableHandle
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.mipmap.ic_home);
         getSupportActionBar().setTitle("");
-        if (savedInstanceState == null) {
-            mInterstitialAd = new InterstitialAd(this);
-            mInterstitialAd.setAdUnitId(getResources().getString(R.string.banner_ad_unit_id));
-            setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
+
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(getResources().getString(R.string.banner_ad_unit_id));
 
 
-            TextView back = (TextView) findViewById(R.id.background);
-            Animation marq = AnimationUtils.loadAnimation(this, R.anim.marq_izq);
-            AnimationSet as = new AnimationSet(true);
-            as.setFillAfter(true);
-            as.addAnimation(marq);
-            back.startAnimation(as);
-            back.setVisibility(View.VISIBLE);
-            valoresLy = (LinearLayout) findViewById(R.id.ly_numeros);
-            hs = (HorizontalScrollView) findViewById(R.id.scroll);
-            valoresLy.setOnTouchListener(new TouchHandler(valoresLy, this, 2, 9999));
-            ArrayList<Integer> valores = generarValores(startNum);
-            findViewById(R.id.ly_fin).setVisibility(View.GONE);
-            findViewById(R.id.scroll).setVisibility(View.VISIBLE);
-
-            NumeroText t = null;
-            for (Integer i : valores) {
-                valoresLy.addView(getNuevoNumero(i));
-            }
-            valoresLy.refreshDrawableState();
-            AdRequest adRequest = new AdRequest.Builder()
-                    .addTestDevice("sony-d6503-BH91CE6Q16")
-                    .build();
-
-            mInterstitialAd.loadAd(adRequest);
-            deseleccionarValores();
+        TextView back = (TextView) findViewById(R.id.background);
+        Animation marq = AnimationUtils.loadAnimation(this, R.anim.marq_izq);
+        AnimationSet as = new AnimationSet(true);
+        as.setFillAfter(true);
+        as.addAnimation(marq);
+        back.startAnimation(as);
+        back.setVisibility(View.VISIBLE);
+        valoresLy = (LinearLayout) findViewById(R.id.ly_numeros);
+        hs = (HorizontalScrollView) findViewById(R.id.scroll);
+        valoresLy.setOnTouchListener(new TouchHandler(valoresLy, this, 2, 9999));
+        ArrayList<Integer> valores;
+        findViewById(R.id.ly_fin).setVisibility(View.GONE);
+        findViewById(R.id.scroll).setVisibility(View.VISIBLE);
+        valores = generarValores(startNum);
+        NumeroText t = null;
+        for (Integer i : valores) {
+            valoresLy.addView(getNuevoNumero(i));
         }
+        valoresLy.refreshDrawableState();
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("sony-d6503-BH91CE6Q16")
+                .build();
+
+        mInterstitialAd.loadAd(adRequest);
+        deseleccionarValores();
+
     }
+
 
     private void reset() {
 
