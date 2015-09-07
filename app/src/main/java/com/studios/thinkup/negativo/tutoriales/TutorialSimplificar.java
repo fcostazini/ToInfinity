@@ -1,6 +1,5 @@
 package com.studios.thinkup.negativo.tutoriales;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -31,11 +30,14 @@ public class TutorialSimplificar extends AppCompatActivity {
     TextView num3;
     TextView num4;
     ImageView hand;
+    int c;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tutorial_simplificar);
+        this.c = this.getResources().getColor(android.R.color.holo_green_dark);
+
 
         Button siguiente = (Button) findViewById(R.id.btn_siguiente);
         siguiente.setOnClickListener(new View.OnClickListener() {
@@ -113,7 +115,7 @@ public class TutorialSimplificar extends AppCompatActivity {
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         hand.setImageResource(R.drawable.point_hold);
-                        int c = TutorialSimplificar.this.getResources().getColor(android.R.color.holo_green_dark);
+
                         num1.setTextColor(c);
                         num1.setShadowLayer(25, 0, 0, c);
                     }
@@ -137,7 +139,7 @@ public class TutorialSimplificar extends AppCompatActivity {
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         hand.setImageResource(R.drawable.point_hold);
-                        int c = TutorialSimplificar.this.getResources().getColor(android.R.color.holo_blue_dark);
+
                         num1.setTextColor(c);
                         num1.setShadowLayer(25, 0, 0, c);
                     }
@@ -166,7 +168,7 @@ public class TutorialSimplificar extends AppCompatActivity {
 
                     }
                 });
-                Animation select = new TranslateAnimation(0, 0,0,0);
+                Animation select = new TranslateAnimation(0, 0, 0, 0);
                 select.setDuration(100);
                 select.setStartOffset(2500);
                 select.setInterpolator(new LinearInterpolator());
@@ -178,7 +180,6 @@ public class TutorialSimplificar extends AppCompatActivity {
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
-                        int c = TutorialSimplificar.this.getResources().getColor(android.R.color.holo_blue_dark);
                         num2.setTextColor(c);
                         num2.setShadowLayer(25, 0, 0, c);
                     }
@@ -201,7 +202,6 @@ public class TutorialSimplificar extends AppCompatActivity {
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
-                        int c = TutorialSimplificar.this.getResources().getColor(android.R.color.holo_blue_dark);
                         num3.setTextColor(c);
                         num3.setShadowLayer(25, 0, 0, c);
                     }

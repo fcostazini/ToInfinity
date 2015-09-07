@@ -9,13 +9,13 @@ android {
         release {
             keyAlias 'toinfinity'
             keyPassword 'Eusold1906@@'
-            storeFile file('C:/Users/Facundo/.android/debug.keystore')
+            storeFile file('C:/Users/fcostazini/.android/debug.keystore')
             storePassword 'Eusold1906@@'
         }
         debug {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
-            storeFile file('C:/Users/Facundo/.android/debug.keystore')
+            storeFile file('C:/Users/fcostazini/.android/debug.keystore')
             storePassword 'android'
         }
     }

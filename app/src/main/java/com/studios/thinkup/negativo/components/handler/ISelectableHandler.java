@@ -12,6 +12,6 @@ import java.util.List;
  */
 public interface ISelectableHandler {
 
-    void selectedClick(List<NumeroText> selected, boolean afterLongClick);
+    void selectedClick(List<NumeroText> selected);
 
 }
