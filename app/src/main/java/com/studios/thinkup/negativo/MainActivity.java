@@ -38,7 +38,7 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity implements ISelectableHandler {
 
     private HorizontalScrollView hs;
-    private Integer startNum = 8;
+
     private LinearLayout valoresLy;
     private InterstitialAd mInterstitialAd;
     float[] alphas = {0.20f, 0.17f, 0.14f, 0.11f, 0.07f, 0.04f, 0.01f};
@@ -65,11 +65,11 @@ public class MainActivity extends AppCompatActivity implements ISelectableHandle
         back.setVisibility(View.VISIBLE);
         valoresLy = (LinearLayout) findViewById(R.id.ly_numeros);
         hs = (HorizontalScrollView) findViewById(R.id.scroll);
-        valoresLy.setOnTouchListener(new TouchHandler(valoresLy, this, 2, 9999));
+        valoresLy.setOnTouchListener(new TouchHandler(valoresLy, this));
         ArrayList<Integer> valores;
         findViewById(R.id.ly_fin).setVisibility(View.GONE);
         findViewById(R.id.scroll).setVisibility(View.VISIBLE);
-        valores = generarValores(startNum);
+        valores = generarValores(8);
         NumeroText t = null;
         for (Integer i : valores) {
             valoresLy.addView(getNuevoNumero(i));
@@ -335,17 +335,19 @@ public class MainActivity extends AppCompatActivity implements ISelectableHandle
     }
 
     @Override
-    public void selectedClick(List<NumeroText> selected, boolean afterLongClick) {
-        if (selected.size() == 1) {
-            romper(selected);
-        } else if (selected.size() > 1) {
-            if (afterLongClick) {
-                simplificar(selected);
-            } else {
+    public void selectedClick(List<NumeroText> selected) {
+        if (selected.size() >= 1) {
+            if (selected.size() == 1) {
+                romper(selected);
+            } else if (selected.size() == 2) {
                 combinar(selected.get(0), selected.get(1));
+            } else {
+                simplificar(selected);
             }
+            deseleccionarValores();
         }
-        deseleccionarValores();
+
+
     }
 
     private void romper(List<NumeroText> selected) {
