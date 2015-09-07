@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item>
         <shape
             android:innerRadiusRatio="3"
@@ -9,7 +10,7 @@
             <gradient
                 android:endColor="#55000000"
                 android:startColor="#11000000"
-                android:type="sweep"/>
+                android:type="sweep" />
         </shape>
     </item>
     <item>
@@ -21,10 +22,10 @@
             <gradient
                 android:endColor="#55000000"
                 android:startColor="#11000000"
-                android:type="sweep"/>
+                android:type="sweep" />
         </shape>
     </item>
-    <item >
+    <item>
         <shape
             android:innerRadiusRatio="3"
             android:shape="ring"
@@ -36,5 +37,6 @@
                 android:type="sweep" />
         </shape>
     </item>
+
 
 </layer-list>

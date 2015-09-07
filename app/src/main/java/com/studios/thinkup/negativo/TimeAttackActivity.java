@@ -40,6 +40,7 @@ public class TimeAttackActivity extends GameCoreActivity {
     Random rand;
     boolean isAnimating;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,8 +91,8 @@ public class TimeAttackActivity extends GameCoreActivity {
 
                 barTimer.setProgress((int) seconds);
                 txtTimer.setText(String.valueOf((int) (seconds / 100)));
-                if(!isAnimating && leftTimeInMilliseconds <= 10000){
-                    Animation a = AnimationUtils.loadAnimation(TimeAttackActivity.this,R.anim.pulse);
+                if (!isAnimating && leftTimeInMilliseconds <= 10000) {
+                    Animation a = AnimationUtils.loadAnimation(TimeAttackActivity.this, R.anim.pulse);
                     txtTimer.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
                     txtTimer.setShadowLayer(21, 0, 0, getResources().getColor(android.R.color.holo_red_dark));
                     txtTimer.startAnimation(a);
@@ -103,6 +104,7 @@ public class TimeAttackActivity extends GameCoreActivity {
             @Override
             public void onFinish() {
                 findViewById(R.id.ly_timer).setVisibility(View.GONE);
+
                 finJuego();
             }
         }.start();
@@ -150,6 +152,7 @@ public class TimeAttackActivity extends GameCoreActivity {
     @Override
     protected void finJuego() {
         //mostrarFondoInfinito(valoresLy.getChildCount());
+
         if (checkFinDeJuego()) {
             Animation alpha = new AlphaAnimation(1, 0);
             alpha.setFillAfter(true);
