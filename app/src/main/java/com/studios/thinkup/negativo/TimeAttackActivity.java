@@ -1,33 +1,23 @@
 package com.studios.thinkup.negativo;
 
-import android.graphics.Color;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.OvalShape;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
+import android.widget.Button;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
-import com.studios.thinkup.negativo.components.NumeroText;
 import com.studios.thinkup.negativo.components.handler.TouchHandler;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -37,7 +27,9 @@ public class TimeAttackActivity extends GameCoreActivity {
     CountDownTimer countDownTimer;
     ProgressBar barTimer;
     TextView txtTimer;
+    TextView txtScore;
     Random rand;
+    int score;
     boolean isAnimating;
 
 
@@ -48,27 +40,37 @@ public class TimeAttackActivity extends GameCoreActivity {
         getSupportActionBar().setIcon(R.mipmap.ic_home);
         getSupportActionBar().setTitle("");
         setContentView(R.layout.time_attack_activity);
+        Button b = (Button)findViewById(R.id.btn_nueva_partida);
+        findViewById(R.id.ly_end_game).setVisibility(View.INVISIBLE);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reset();
+            }
+        });
         isAnimating = false;
+        score = 0;
+
         mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId(getResources().getString(R.string.banner_ad_unit_id));
+
+        txtScore = (TextView) findViewById(R.id.txt_score);
+        txtScore.setText(String.valueOf(score));
         valoresLy = (LinearLayout) findViewById(R.id.ly_numeros);
         hs = (HorizontalScrollView) findViewById(R.id.scroll);
         valoresLy.setOnTouchListener(new TouchHandler(valoresLy, this));
         ArrayList<Integer> valores;
         findViewById(R.id.ly_fin).setVisibility(View.GONE);
         findViewById(R.id.scroll).setVisibility(View.VISIBLE);
-        valores = generarValores(8);
-        NumeroText t = null;
+
+
         barTimer = (ProgressBar) findViewById(R.id.barTimer);
         Animation r = new RotateAnimation(0.5f, 0.5f, 0, 90);
         r.setDuration(100);
         barTimer.startAnimation(r);
         txtTimer = (TextView) findViewById(R.id.txt_timer);
         findViewById(R.id.ly_timer).setVisibility(View.VISIBLE);
-        for (Integer i : valores) {
-            valoresLy.addView(getNuevoNumero(i));
-        }
-        valoresLy.refreshDrawableState();
+        resetNumber();
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice("sony-d6503-BH91CE6Q16")
                 .build();
@@ -91,7 +93,8 @@ public class TimeAttackActivity extends GameCoreActivity {
 
                 barTimer.setProgress((int) seconds);
                 txtTimer.setText(String.valueOf((int) (seconds / 100)));
-                if (!isAnimating && leftTimeInMilliseconds <= 10000) {
+                if (!isAnimating && leftTimeInMilliseconds <= 57000) {
+                    finTiempo();
                     Animation a = AnimationUtils.loadAnimation(TimeAttackActivity.this, R.anim.pulse);
                     txtTimer.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
                     txtTimer.setShadowLayer(21, 0, 0, getResources().getColor(android.R.color.holo_red_dark));
@@ -103,11 +106,23 @@ public class TimeAttackActivity extends GameCoreActivity {
 
             @Override
             public void onFinish() {
-                findViewById(R.id.ly_timer).setVisibility(View.GONE);
-
-                finJuego();
+                finTiempo();
             }
         }.start();
+
+    }
+
+    private void finTiempo() {
+        int[] location = new int[2];
+
+        View lyEndGame = findViewById(R.id.ly_end_game);
+        lyEndGame.getLocationOnScreen(location);
+        lyEndGame.setVisibility(View.VISIBLE);
+        findViewById(R.id.ly_timer).setVisibility(View.GONE);
+        findViewById(R.id.ly_numeros).setVisibility(View.GONE);
+        View score = findViewById(R.id.ly_score);
+        score.setY((lyEndGame.getHeight() - score.getPaddingBottom() - score.getHeight() )/2);
+        score.setX((lyEndGame.getWidth() + score.getPaddingLeft() - score.getWidth())/2);
 
     }
 
@@ -154,7 +169,7 @@ public class TimeAttackActivity extends GameCoreActivity {
         //mostrarFondoInfinito(valoresLy.getChildCount());
 
         if (checkFinDeJuego()) {
-            Animation alpha = new AlphaAnimation(1, 0);
+            /*Animation alpha = new AlphaAnimation(1, 0);
             alpha.setFillAfter(true);
             alpha.setDuration(500);
             alpha.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -174,8 +189,20 @@ public class TimeAttackActivity extends GameCoreActivity {
                 t.startAnimation(a);
                 ly.addView(t);
             }
-            ly.refreshDrawableState();
+            ly.refreshDrawableState();*/
+            score++;
+            txtScore.setText(String.valueOf(score));
+            resetNumber();
 
         }
+    }
+
+    private void resetNumber() {
+        ArrayList<Integer> valores = generarValores(8);
+        valoresLy.removeAllViews();
+        for (Integer i : valores) {
+            valoresLy.addView(getNuevoNumero(i));
+        }
+        valoresLy.refreshDrawableState();
     }
 }
