@@ -153,15 +153,6 @@
             android:padding="10dp"
             android:layout_marginBottom="10dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Tu Puntaje"
-            android:id="@+id/textView"
-            android:layout_above="@+id/btn_nueva_partida"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="20dp" />
     </RelativeLayout>
 
 </RelativeLayout>

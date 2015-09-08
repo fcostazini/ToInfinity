@@ -2,12 +2,19 @@ package com.studios.thinkup.negativo;
 
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
+import android.view.animation.BounceInterpolator;
 import android.view.animation.RotateAnimation;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
@@ -40,7 +47,7 @@ public class TimeAttackActivity extends GameCoreActivity {
         getSupportActionBar().setIcon(R.mipmap.ic_home);
         getSupportActionBar().setTitle("");
         setContentView(R.layout.time_attack_activity);
-        Button b = (Button)findViewById(R.id.btn_nueva_partida);
+        Button b = (Button) findViewById(R.id.btn_nueva_partida);
         findViewById(R.id.ly_end_game).setVisibility(View.INVISIBLE);
         b.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,8 +100,8 @@ public class TimeAttackActivity extends GameCoreActivity {
 
                 barTimer.setProgress((int) seconds);
                 txtTimer.setText(String.valueOf((int) (seconds / 100)));
-                if (!isAnimating && leftTimeInMilliseconds <= 57000) {
-                    finTiempo();
+                if (!isAnimating && leftTimeInMilliseconds <= 10000) {
+
                     Animation a = AnimationUtils.loadAnimation(TimeAttackActivity.this, R.anim.pulse);
                     txtTimer.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
                     txtTimer.setShadowLayer(21, 0, 0, getResources().getColor(android.R.color.holo_red_dark));
@@ -113,16 +120,43 @@ public class TimeAttackActivity extends GameCoreActivity {
     }
 
     private void finTiempo() {
-        int[] location = new int[2];
-
-        View lyEndGame = findViewById(R.id.ly_end_game);
-        lyEndGame.getLocationOnScreen(location);
-        lyEndGame.setVisibility(View.VISIBLE);
-        findViewById(R.id.ly_timer).setVisibility(View.GONE);
-        findViewById(R.id.ly_numeros).setVisibility(View.GONE);
         View score = findViewById(R.id.ly_score);
-        score.setY((lyEndGame.getHeight() - score.getPaddingBottom() - score.getHeight() )/2);
-        score.setX((lyEndGame.getWidth() + score.getPaddingLeft() - score.getWidth())/2);
+
+        AnimationSet as = new AnimationSet(false);
+        as.setFillAfter(true);
+
+        Animation alpha = new AlphaAnimation(1f, 0f);
+        alpha.setDuration(500);
+        alpha.setInterpolator(new AccelerateInterpolator());
+        alpha.setFillAfter(true);
+
+        findViewById(R.id.ly_timer).startAnimation(alpha);
+        findViewById(R.id.ly_numeros).startAnimation(alpha);
+
+        Animation move = getMoveToCenterAnimation(score);
+        move.setStartOffset(400);
+        move.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                View lyEndGame = findViewById(R.id.ly_end_game);
+
+                lyEndGame.setVisibility(View.VISIBLE);
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        as.addAnimation(move);
+        score.startAnimation(as);
+
 
     }
 
@@ -204,5 +238,24 @@ public class TimeAttackActivity extends GameCoreActivity {
             valoresLy.addView(getNuevoNumero(i));
         }
         valoresLy.refreshDrawableState();
+    }
+
+    private Animation getMoveToCenterAnimation(View view) {
+
+        DisplayMetrics dm = new DisplayMetrics();
+        this.getWindowManager().getDefaultDisplay().getMetrics(dm);
+
+
+        int originalPos[] = new int[2];
+        view.getLocationOnScreen(originalPos);
+
+        int xDest = dm.widthPixels / 2;
+        xDest -= (view.getMeasuredWidth() / 2);
+        int yDest = dm.heightPixels / 2 - (view.getMeasuredHeight() / 2);
+
+        TranslateAnimation anim = new TranslateAnimation(0, xDest - originalPos[0], 0, yDest - originalPos[1]);
+        anim.setDuration(1000);
+        anim.setFillAfter(true);
+        return anim;
     }
 }
