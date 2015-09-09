@@ -45,10 +45,22 @@ public class TouchHandler implements View.OnTouchListener {
             }
             case MotionEvent.ACTION_UP: {
 
+                if (selected.size() == 0) {
+                    NumeroText v;
+                    try {
+                        v = (NumeroText) findViewAtPosition(container, (int) motionEvent.getX(), (int) motionEvent.getY());
+                    } catch (ClassCastException e) {
+                        v = null;
+                    }
+                    if (v != null) {
+                        selectView(v);
+                    }
+                }
                 if (selected.size() > 0) {
                     handler.selectedClick(selected);
+                    selected.clear();
                 }
-                selected.clear();
+
 
                 break;
             }

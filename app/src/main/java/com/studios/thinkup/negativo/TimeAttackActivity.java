@@ -55,6 +55,7 @@ public class TimeAttackActivity extends GameCoreActivity {
                 reset();
             }
         });
+
         isAnimating = false;
         score = 0;
 
@@ -66,8 +67,10 @@ public class TimeAttackActivity extends GameCoreActivity {
         valoresLy = (LinearLayout) findViewById(R.id.ly_numeros);
         hs = (HorizontalScrollView) findViewById(R.id.scroll);
         valoresLy.setOnTouchListener(new TouchHandler(valoresLy, this));
-        ArrayList<Integer> valores;
+        valoresLy.setEnabled(true);
+
         findViewById(R.id.ly_fin).setVisibility(View.GONE);
+        findViewById(R.id.ly_end_game).setVisibility(View.GONE);
         findViewById(R.id.scroll).setVisibility(View.VISIBLE);
 
 
@@ -121,7 +124,7 @@ public class TimeAttackActivity extends GameCoreActivity {
 
     private void finTiempo() {
         View score = findViewById(R.id.ly_score);
-
+        valoresLy.setEnabled(false);
         AnimationSet as = new AnimationSet(false);
         as.setFillAfter(true);
 
@@ -131,7 +134,8 @@ public class TimeAttackActivity extends GameCoreActivity {
         alpha.setFillAfter(true);
 
         findViewById(R.id.ly_timer).startAnimation(alpha);
-        findViewById(R.id.ly_numeros).startAnimation(alpha);
+        valoresLy.startAnimation(alpha);
+
 
         Animation move = getMoveToCenterAnimation(score);
         move.setStartOffset(400);
